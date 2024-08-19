@@ -1,28 +1,38 @@
-// src/app/components/chat/chat.component.ts
 import { Component, OnInit } from '@angular/core';
-import { NgFor, NgIf } from '@angular/common';
+import { CommonModule } from '@angular/common';
 import { FormsModule } from '@angular/forms';
 import { ChatService } from '../services/chat.service';
+import { ChatMessage, MessageType } from '../models/chat.model';  // Assurez-vous que ce modèle est défini pour représenter les types de messages
 
 @Component({
   selector: 'app-chat',
   standalone: true,
-  imports: [NgFor, NgIf, FormsModule],
+  imports: [CommonModule, FormsModule],
   templateUrl: './chat.component.html',
-  styleUrls: ['./chat.component.css'],
+  styleUrls: ['./chat.component.css']
 })
 export class ChatComponent implements OnInit {
   username: string = '';
   newMessage: string = '';
-  messages: any[] = [];
+  messages: ChatMessage[] = [];  // Assurez-vous que `ChatMessage` est le bon type pour vos messages
+  isJoined: boolean = false;
 
   constructor(private chatService: ChatService) {}
 
   ngOnInit() {
     this.chatService.connect();
 
-    this.chatService.getMessageSubject().subscribe((message) => {
+    this.chatService.getMessageSubject().subscribe(message => {
       this.messages.push(message);
+
+      // Vérifie si le message est de type 'JOIN' pour afficher un message spécifique
+      if (message.type === MessageType.JOIN) {
+        this.messages.push({
+          type: MessageType.CHAT,
+          sender: 'Session',
+          content: `${message.sender} a rejoint la discussion`
+        });
+      }
     });
   }
 
@@ -31,7 +41,7 @@ export class ChatComponent implements OnInit {
       this.chatService.sendMessage({
         sender: this.username,
         content: this.newMessage,
-        type: 'CHAT',
+        type: MessageType.CHAT
       });
       this.newMessage = '';
     }
@@ -39,7 +49,8 @@ export class ChatComponent implements OnInit {
 
   joinChat() {
     if (this.username) {
-      this.chatService.addUser({ sender: this.username, type: 'JOIN' });
+      this.chatService.addUser({ sender: this.username, type: MessageType.JOIN });
+      this.isJoined = true;
     }
   }
 }
