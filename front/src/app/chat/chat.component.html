@@ -1,19 +1,41 @@
-<div *ngIf="!isJoined">
-  <input [(ngModel)]="username" placeholder="Enter your name" />
-  <button (click)="joinChat()">Join Chat</button>
-</div>
-
-<div *ngIf="isJoined">
-  <div *ngIf="messages.length > 0">
-    <ul>
-      <li *ngFor="let message of messages">
-        <strong>{{ message.sender }}:</strong> {{ message.content }}
-      </li>
-    </ul>
+<div style="display: flex; flex-direction: column; justify-content: center; margin: auto; height: 100%; align-items: center">
+  <h1 style="font-size: 25px">Chat en temps réel (démo)</h1>
+  <!-- Affiche le nom de l'utilisateur après qu'il ait rejoint -->
+  <div *ngIf="isJoined" style="margin-bottom: 20px;">
+    <h2 style="font-size: 20px;">Connecté en tant que : <strong>{{ username }}</strong></h2>
   </div>
 
-  <div>
-    <input [(ngModel)]="newMessage" placeholder="Enter your message" />
-    <button (click)="sendMessage()">Send</button>
+  <!-- Avant de rejoindre la discussion -->
+  <div *ngIf="!isJoined">
+    <mat-card class="join-card" >
+      <mat-card-content style="display: flex; flex-direction: column">
+        <mat-form-field class="full-width">
+          <input matInput [(ngModel)]="username" placeholder="Entrez votre nom" />
+        </mat-form-field>
+        <button mat-raised-button color="primary" (click)="joinChat()">Rejoindre la discussion</button>
+      </mat-card-content>
+    </mat-card>
+  </div>
+
+  <!-- Après avoir rejoint la discussion -->
+  <div *ngIf="isJoined">
+    <mat-card class="chat-card">
+      <mat-card-content>
+        <!-- Liste des messages -->
+        <div *ngIf="messages.length > 0" class="message-list">
+          <mat-list>
+            <mat-list-item *ngFor="let message of messages">
+              <strong>{{ message.sender }}:</strong> {{ message.content }}
+            </mat-list-item>
+          </mat-list>
+        </div>
+
+        <!-- Entrer un nouveau message -->
+        <mat-form-field class="full-width">
+          <input matInput [(ngModel)]="newMessage" placeholder="Entrez votre message" />
+        </mat-form-field>
+        <button mat-raised-button color="accent" (click)="sendMessage()" style="margin-left: 20px">Envoyer</button>
+      </mat-card-content>
+    </mat-card>
   </div>
 </div>
