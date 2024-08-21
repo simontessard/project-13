@@ -20,7 +20,7 @@ export class ChatService {
     this.stompClient.onConnect = (frame) => {
       console.log('Connected: ' + frame);
 
-      this.stompClient.subscribe('/topic/public', (message) => {
+      this.stompClient.subscribe('/public', (message) => {
         this.messageSubject.next(JSON.parse(message.body));
       });
     };
